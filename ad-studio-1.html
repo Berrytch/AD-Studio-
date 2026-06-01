@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AD Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0c0c0c;
+  --bg2:#141414;
+  --bg3:#1a1a1a;
+  --border:#2a2a2a;
+  --accent:#7fffb2;
+  --white:#eeece7;
+  --muted:#666;
+  --text:#aaa;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--white);font-family:'Inter',sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:999;display:flex;align-items:center;justify-content:space-between;padding:0 40px;height:64px;background:rgba(12,12,12,0.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:.08em;color:var(--white);text-decoration:none}
+.logo span{color:var(--accent)}
+.nav-menu{display:flex;align-items:center;gap:8px}
+.nav-btn{background:none;border:none;color:var(--text);font-family:'Inter',sans-serif;font-size:.8rem;letter-spacing:.05em;padding:8px 16px;border-radius:6px;transition:background .2s,color .2s;font-weight:500}
+.nav-btn:hover,.nav-btn.active{background:var(--bg3);color:var(--white)}
+.nav-wa{background:var(--accent);color:#0c0c0c;font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:500;letter-spacing:.06em;padding:9px 20px;border:none;border-radius:6px;transition:opacity .2s,transform .2s;cursor:pointer;white-space:nowrap}
+.nav-wa:hover{opacity:.85;transform:translateY(-1px)}
+
+/* HAMBURGER */
+.hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;padding:8px;cursor:pointer}
+.hamburger span{display:block;width:22px;height:2px;background:var(--white);border-radius:2px;transition:all .3s}
+.mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;background:var(--bg2);border-bottom:1px solid var(--border);padding:16px 24px;flex-direction:column;gap:4px;z-index:998}
+.mobile-menu.open{display:flex}
+.mob-btn{background:none;border:none;color:var(--text);font-family:'Inter',sans-serif;font-size:.9rem;padding:12px 16px;text-align:left;border-radius:6px;transition:background .2s,color .2s;font-weight:500}
+.mob-btn:hover{background:var(--bg3);color:var(--white)}
+.mob-wa{background:var(--accent);color:#0c0c0c;font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:500;padding:12px 16px;border:none;border-radius:6px;margin-top:8px;text-align:center;cursor:pointer}
+
+/* PAGES */
+.page{display:none;min-height:calc(100vh - 64px);padding-top:64px}
+.page.active{display:block}
+
+/* ── HOME ── */
+#home{background:var(--bg)}
+.hero{padding:80px 40px 60px;max-width:1100px;margin:0 auto}
+.hero-tag{font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);display:flex;align-items:center;gap:8px;margin-bottom:28px}
+.hero-tag::before{content:'';width:5px;height:5px;background:var(--accent);border-radius:50%}
+.hero-h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(4.5rem,12vw,10rem);line-height:.9;letter-spacing:-.01em}
+.hero-h1 .ghost{-webkit-text-stroke:1px rgba(238,236,231,.18);color:transparent}
+.hero-h1 .dot{color:var(--accent)}
+.hero-row{display:flex;align-items:flex-start;justify-content:space-between;gap:40px;margin-top:48px;flex-wrap:wrap}
+.hero-desc{font-size:1rem;line-height:1.75;color:var(--text);max-width:420px;flex-shrink:0}
+.hero-desc strong{color:var(--white);font-weight:500}
+.hero-btns{display:flex;flex-direction:column;gap:12px;flex-shrink:0}
+.btn-green{background:var(--accent);color:#0c0c0c;font-family:'JetBrains Mono',monospace;font-size:.75rem;font-weight:500;letter-spacing:.06em;padding:14px 28px;border:none;border-radius:6px;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .2s,transform .2s;white-space:nowrap;text-decoration:none}
+.btn-green:hover{opacity:.85;transform:translateY(-2px)}
+.btn-outline{background:none;color:var(--white);font-family:'JetBrains Mono',monospace;font-size:.75rem;font-weight:500;letter-spacing:.06em;padding:14px 28px;border:1px solid var(--border);border-radius:6px;cursor:pointer;transition:border-color .2s,color .2s;white-space:nowrap;text-decoration:none;display:block;text-align:center}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent)}
+
+/* TICKER */
+.ticker{overflow:hidden;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:12px 0;background:var(--bg2)}
+.ticker-track{display:flex;animation:tick 22s linear infinite;white-space:nowrap}
+.ticker-track span{font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);padding:0 32px;flex-shrink:0}
+.ticker-track .sep{color:var(--accent);padding:0 8px}
+@keyframes tick{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* HOME PREVIEW CARDS */
+.preview{padding:64px 40px;max-width:1100px;margin:0 auto}
+.preview-label{font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:32px}
+.cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border)}
+.card{background:var(--bg2);padding:32px 28px;transition:background .25s}
+.card:hover{background:var(--bg3)}
+.card-icon{font-size:1.8rem;margin-bottom:16px}
+.card-name{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:.04em;margin-bottom:8px}
+.card-desc{font-size:.82rem;line-height:1.65;color:var(--text)}
+.preview-more{margin-top:24px;text-align:center}
+
+/* CTA BAND */
+.cta-band{background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:48px 40px;display:flex;align-items:center;justify-content:space-between;gap:32px;flex-wrap:wrap}
+.cta-band h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,4vw,3rem);letter-spacing:.03em;line-height:1}
+.cta-band p{font-size:.85rem;color:var(--text);margin-top:6px}
+
+/* ── SERVICES ── */
+#servicos .inner{padding:64px 40px;max-width:1100px;margin:0 auto}
+.sec-top{margin-bottom:48px}
+.sec-eye{font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
+.sec-h{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.8rem,7vw,5.5rem);line-height:.9;letter-spacing:.02em}
+.sec-h span{-webkit-text-stroke:1px rgba(238,236,231,.2);color:transparent}
+.sec-sub{font-size:.88rem;line-height:1.7;color:var(--text);max-width:400px;margin-top:16px}
+.svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border)}
+.svc{background:var(--bg2);padding:40px 32px;transition:background .25s;position:relative;overflow:hidden}
+.svc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform .35s}
+.svc:hover{background:var(--bg3)}
+.svc:hover::before{transform:scaleX(1)}
+.svc-num{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--accent);letter-spacing:.1em;margin-bottom:24px;opacity:.6}
+.svc-icon{font-size:2rem;margin-bottom:14px;display:block}
+.svc-name{font-family:'Bebas Neue',sans-serif;font-size:1.7rem;letter-spacing:.03em;margin-bottom:12px;line-height:1}
+.svc-desc{font-size:.83rem;line-height:1.7;color:var(--text)}
+.svc-tags{margin-top:20px;display:flex;flex-wrap:wrap;gap:6px}
+.tag{font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.08em;padding:4px 10px;border:1px solid var(--border);color:var(--muted);border-radius:4px}
+.svc-special{background:rgba(127,255,178,.04);border:none}
+.svc-special .svc-name{color:var(--accent)}
+
+/* ── SOBRE ── */
+#sobre .inner{padding:64px 40px;max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start}
+.about-h{font-family:'Bebas Neue',sans-serif;font-size:clamp(3rem,7vw,6rem);line-height:.9;letter-spacing:.02em}
+.about-h .ghost{-webkit-text-stroke:1px rgba(238,236,231,.18);color:transparent}
+.about-h .dot{color:var(--accent)}
+.stats{display:flex;gap:32px;margin-top:48px;padding-top:40px;border-top:1px solid var(--border)}
+.stat-n{font-family:'Bebas Neue',sans-serif;font-size:3rem;color:var(--accent);line-height:1}
+.stat-l{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+.about-text p{font-size:.9rem;line-height:1.85;color:var(--text);margin-bottom:20px}
+.about-text p strong{color:var(--white);font-weight:600}
+.pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.pill{font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.08em;padding:6px 14px;border:1px solid var(--border);color:var(--muted);border-radius:4px;transition:border-color .2s,color .2s}
+.pill:hover{border-color:var(--accent);color:var(--accent)}
+
+/* ── CONTACTO ── */
+#contacto .inner{padding:64px 40px;max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start}
+.contact-h{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,6vw,5rem);line-height:.9;letter-spacing:.02em}
+.contact-h span{color:var(--accent)}
+.contact-links{margin-top:36px;display:flex;flex-direction:column;gap:14px}
+.contact-links a{color:var(--text);text-decoration:none;font-size:.88rem;display:flex;align-items:center;gap:10px;transition:color .2s}
+.contact-links a:hover{color:var(--accent)}
+.contact-links .arr{font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--accent)}
+.form-box{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:36px 32px}
+.form-box h3{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:.04em;margin-bottom:6px}
+.form-box p{font-size:.82rem;color:var(--text);line-height:1.6;margin-bottom:28px}
+.field{margin-bottom:18px}
+.field label{display:block;font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+.field select,.field textarea{width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--white);font-family:'Inter',sans-serif;font-size:.88rem;padding:12px 14px;border-radius:6px;outline:none;transition:border-color .25s;appearance:none}
+.field select:focus,.field textarea:focus{border-color:var(--accent)}
+.field select option{background:var(--bg3)}
+.field textarea{min-height:96px;resize:vertical}
+.btn-wa{width:100%;background:#25D366;color:#fff;font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:500;letter-spacing:.06em;border:none;border-radius:6px;padding:15px;display:flex;align-items:center;justify-content:center;gap:10px;cursor:pointer;transition:opacity .2s,transform .2s}
+.btn-wa:hover{opacity:.88;transform:translateY(-2px)}
+.wa-hint{text-align:center;font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--muted);margin-top:12px;letter-spacing:.08em}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);padding:28px 40px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.f-logo{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:.08em}
+.f-logo span{color:var(--accent)}
+footer p{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--muted);letter-spacing:.06em}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  nav{padding:0 20px}
+  .nav-menu{display:none}
+  .hamburger{display:flex}
+  .hero{padding:48px 20px 40px}
+  .hero-h1{font-size:clamp(3.8rem,14vw,6rem)}
+  .hero-row{flex-direction:column}
+  .hero-btns{flex-direction:row;flex-wrap:wrap}
+  .preview{padding:40px 20px}
+  .cards3{grid-template-columns:1fr}
+  .cta-band{padding:36px 20px;flex-direction:column;align-items:flex-start}
+  #servicos .inner,.form-box{padding:40px 20px}
+  .svc-grid{grid-template-columns:1fr}
+  #sobre .inner,#contacto .inner{padding:40px 20px;grid-template-columns:1fr;gap:40px}
+  footer{padding:24px 20px;flex-direction:column;text-align:center}
+}
+@media(min-width:769px) and (max-width:1024px){
+  .svc-grid{grid-template-columns:repeat(2,1fr)}
+  .cards3{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="logo" href="#" onclick="show('home');return false">AD<span>.</span>Studio</a>
+  <div class="nav-menu">
+    <button class="nav-btn" onclick="show('home')">Início</button>
+    <button class="nav-btn" onclick="show('servicos')">Serviços</button>
+    <button class="nav-btn" onclick="show('sobre')">Sobre</button>
+    <button class="nav-btn" onclick="show('contacto')">Contacto</button>
+    <button class="nav-wa" onclick="wa('Olá! Vim pelo site da AD Studio e gostaria de pedir um orçamento.')">💬 Orçamento</button>
+  </div>
+  <button class="hamburger" onclick="toggleMenu()" id="hbg">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mob">
+  <button class="mob-btn" onclick="show('home');closeMob()">Início</button>
+  <button class="mob-btn" onclick="show('servicos');closeMob()">Serviços</button>
+  <button class="mob-btn" onclick="show('sobre');closeMob()">Sobre</button>
+  <button class="mob-btn" onclick="show('contacto');closeMob()">Contacto</button>
+  <button class="mob-wa" onclick="wa('Olá! Vim pelo site da AD Studio e gostaria de pedir um orçamento.');closeMob()">💬 Pedir Orçamento no WhatsApp</button>
+</div>
+
+<!-- ═══ HOME ═══ -->
+<div class="page active" id="home">
+  <div class="hero">
+    <p class="hero-tag">Estúdio Digital · Angola</p>
+    <h1 class="hero-h1">
+      AD<span class="dot">.</span><br>
+      <span class="ghost">STUDIO</span>
+    </h1>
+    <div class="hero-row">
+      <p class="hero-desc">
+        Soluções digitais completas —<br>
+        <strong>tecnologia, design e criação visual</strong><br>
+        para o teu negócio crescer online.
+      </p>
+      <div class="hero-btns">
+        <button class="btn-green" onclick="wa('Olá! Vim pelo site da AD Studio e gostaria de pedir um orçamento.')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.122 1.532 5.852L.057 23.428a.75.75 0 00.921.921l5.576-1.475A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.907 0-3.694-.513-5.23-1.406l-.374-.22-3.873 1.024 1.024-3.747-.242-.386A9.956 9.956 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+          Pedir Orçamento
+        </button>
+        <button class="btn-outline" onclick="show('servicos')">Ver Serviços →</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="ticker">
+    <div class="ticker-track">
+      <span>Suporte Técnico</span><span class="sep">✦</span>
+      <span>Desenvolvimento Web</span><span class="sep">✦</span>
+      <span>Edição de Vídeo</span><span class="sep">✦</span>
+      <span>Motion Graphics</span><span class="sep">✦</span>
+      <span>Design Gráfico</span><span class="sep">✦</span>
+      <span>Instalação de Sistemas</span><span class="sep">✦</span>
+      <span>Suporte Técnico</span><span class="sep">✦</span>
+      <span>Desenvolvimento Web</span><span class="sep">✦</span>
+      <span>Edição de Vídeo</span><span class="sep">✦</span>
+      <span>Motion Graphics</span><span class="sep">✦</span>
+      <span>Design Gráfico</span><span class="sep">✦</span>
+      <span>Instalação de Sistemas</span><span class="sep">✦</span>
+    </div>
+  </div>
+
+  <div class="preview">
+    <p class="preview-label">O que fazemos</p>
+    <div class="cards3">
+      <div class="card">
+        <div class="card-icon">🖥️</div>
+        <div class="card-name">Suporte Técnico</div>
+        <p class="card-desc">Manutenção preventiva e instalação de sistemas operacionais.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🎬</div>
+        <div class="card-name">Vídeo & Motion</div>
+        <p class="card-desc">Edição profissional e animações em After Effects.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🌐</div>
+        <div class="card-name">Web & Design</div>
+        <p class="card-desc">Sites e peças visuais que comunicam com impacto.</p>
+      </div>
+    </div>
+    <div class="preview-more" style="margin-top:24px">
+      <button class="btn-outline" style="display:inline-block;padding:12px 28px" onclick="show('servicos')">Ver todos os serviços →</button>
+    </div>
+  </div>
+
+  <div class="cta-band">
+    <div>
+      <h2>PRONTO PARA COMEÇAR?</h2>
+      <p>Fala connosco hoje — resposta rápida garantida.</p>
+    </div>
+    <button class="btn-green" onclick="wa('Olá! Vim pelo site da AD Studio e quero falar sobre um projecto.')">
+      Falar Agora no WhatsApp →
+    </button>
+  </div>
+</div>
+
+<!-- ═══ SERVIÇOS ═══ -->
+<div class="page" id="servicos">
+  <div class="inner">
+    <div class="sec-top">
+      <p class="sec-eye">O que oferecemos</p>
+      <h2 class="sec-h">NOSSOS<br><span>SERVIÇOS</span></h2>
+      <p class="sec-sub">Soluções completas de tecnologia e criação visual para o teu negócio.</p>
+    </div>
+    <div class="svc-grid">
+      <div class="svc">
+        <p class="svc-num">01</p>
+        <span class="svc-icon">🖥️</span>
+        <div class="svc-name">Suporte Técnico</div>
+        <p class="svc-desc">Manutenção preventiva de computadores e instalação de sistemas operacionais. Mantemos o teu equipamento sempre operacional.</p>
+        <div class="svc-tags"><span class="tag">Manutenção</span><span class="tag">Windows</span><span class="tag">Linux</span></div>
+      </div>
+      <div class="svc">
+        <p class="svc-num">02</p>
+        <span class="svc-icon">🌐</span>
+        <div class="svc-name">Desenvolvimento Web</div>
+        <p class="svc-desc">Criação de websites e landing pages com HTML e CSS. Páginas rápidas e pensadas para converter visitantes em clientes.</p>
+        <div class="svc-tags"><span class="tag">HTML</span><span class="tag">CSS</span><span class="tag">Landing Page</span></div>
+      </div>
+      <div class="svc">
+        <p class="svc-num">03</p>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+          <span class="svc-icon" style="margin:0">🎬</span>
+          <div style="display:flex;align-items:center;gap:8px">
+            <div style="background:#9999FF;border-radius:4px;padding:3px 8px;font-family:'JetBrains Mono',monospace;font-size:.6rem;font-weight:500;color:#fff;letter-spacing:.04em">Pr</div>
+            <span style="font-size:.65rem;color:var(--muted);font-family:'JetBrains Mono',monospace">Adobe Premiere</span>
+          </div>
+        </div>
+        <div class="svc-name">Edição de Vídeo</div>
+        <p class="svc-desc">Edição profissional para redes sociais, publicidade e conteúdo institucional. Cortes, cores, som e storytelling visual de impacto — tudo feito no <strong style="color:var(--white)">Adobe Premiere Pro</strong>.</p>
+        <div class="svc-tags"><span class="tag">Premiere Pro</span><span class="tag">Reels</span><span class="tag">Publicidade</span><span class="tag">Color Grading</span></div>
+      </div>
+      <div class="svc">
+        <p class="svc-num">04</p>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+          <span class="svc-icon" style="margin:0">✨</span>
+          <div style="display:flex;align-items:center;gap:8px">
+            <div style="background:#9999FF;border-radius:4px;padding:3px 8px;font-family:'JetBrains Mono',monospace;font-size:.6rem;font-weight:500;color:#fff;letter-spacing:.04em">Ae</div>
+            <span style="font-size:.65rem;color:var(--muted);font-family:'JetBrains Mono',monospace">After Effects</span>
+          </div>
+        </div>
+        <div class="svc-name">Motion Graphics</div>
+        <p class="svc-desc">Animações e efeitos visuais que elevam qualquer projecto. Intros, títulos animados, transições e motion design — criados no <strong style="color:var(--white)">Adobe After Effects</strong> sem curso, só na prática.</p>
+        <div class="svc-tags"><span class="tag">After Effects</span><span class="tag">Animação</span><span class="tag">Intros</span><span class="tag">VFX</span></div>
+      </div>
+      <div class="svc">
+        <p class="svc-num">05</p>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+          <span class="svc-icon" style="margin:0">🎨</span>
+          <div style="display:flex;align-items:center;gap:8px">
+            <div style="background:#31A8FF;border-radius:4px;padding:3px 8px;font-family:'JetBrains Mono',monospace;font-size:.6rem;font-weight:500;color:#fff;letter-spacing:.04em">Ps</div>
+            <span style="font-size:.65rem;color:var(--muted);font-family:'JetBrains Mono',monospace">Photoshop</span>
+          </div>
+        </div>
+        <div class="svc-name">Design Gráfico</div>
+        <p class="svc-desc">Criação de peças visuais para redes sociais, banners, capas e materiais de marketing. Design feito no <strong style="color:var(--white)">Adobe Photoshop</strong> que comunica e que é lembrado.</p>
+        <div class="svc-tags"><span class="tag">Photoshop</span><span class="tag">Social Media</span><span class="tag">Banners</span><span class="tag">Branding</span></div>
+      </div>
+      <div class="svc">
+        <p class="svc-num">06</p>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+          <span class="svc-icon" style="margin:0">✏️</span>
+          <div style="display:flex;align-items:center;gap:8px">
+            <div style="background:#FF9A00;border-radius:4px;padding:3px 8px;font-family:'JetBrains Mono',monospace;font-size:.6rem;font-weight:500;color:#fff;letter-spacing:.04em">Ai</div>
+            <span style="font-size:.65rem;color:var(--muted);font-family:'JetBrains Mono',monospace">Illustrator</span>
+          </div>
+        </div>
+        <div class="svc-name">Identidade Visual</div>
+        <p class="svc-desc">Criação de logótipos, ícones e identidade visual vectorial no <strong style="color:var(--white)">Adobe Illustrator</strong>. Peças escaláveis e profissionais para a tua marca.</p>
+        <div class="svc-tags"><span class="tag">Illustrator</span><span class="tag">Logótipo</span><span class="tag">Vectorial</span><span class="tag">Identidade Visual</span></div>
+      </div>
+      <div class="svc svc-special">
+        <span class="svc-icon">💬</span>
+        <div class="svc-name">Projecto à medida?</div>
+        <p class="svc-desc" style="margin-top:10px">Se o que precisas não está na lista, entra em contacto. Encontramos a solução certa para ti.</p>
+        <button class="btn-green" style="margin-top:28px;font-size:.72rem;padding:12px 22px" onclick="wa('Olá! Vim pelo site e tenho interesse nos serviços da AD Studio.')">
+          Falar no WhatsApp →
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SOBRE ═══ -->
+<div class="page" id="sobre">
+  <div class="inner">
+    <div>
+      <h2 class="about-h">
+        QUEM<br>
+        <span class="ghost">SOMOS</span><br>
+        NÓS<span class="dot">.</span>
+      </h2>
+      <div class="stats">
+        <div><div class="stat-n">5+</div><div class="stat-l">Serviços</div></div>
+        <div><div class="stat-n">100%</div><div class="stat-l">Dedicação</div></div>
+        <div><div class="stat-n">∞</div><div class="stat-l">Soluções</div></div>
+      </div>
+    </div>
+    <div class="about-text">
+      <p>A <strong>AD Studio</strong> nasceu da combinação de duas paixões: <strong>tecnologia</strong> e <strong>criação visual</strong>. Acreditamos que uma empresa moderna precisa das duas para se destacar no ambiente digital.</p>
+      <p>Somos um estúdio independente com soluções completas — desde a manutenção do teu equipamento até à produção de conteúdo visual que comunica com impacto real.</p>
+      <p>O que nos diferencia é a <strong>velocidade de aprendizagem e adaptação</strong>. Cada ferramenta foi dominada na prática. O resultado é trabalho que funciona.</p>
+      <div class="pills">
+        <span class="pill">After Effects</span>
+        <span class="pill">Adobe Premiere</span>
+        <span class="pill">Photoshop</span>
+        <span class="pill">HTML / CSS</span>
+        <span class="pill">Manutenção PC</span>
+        <span class="pill">Windows / Linux</span>
+      </div>
+      <div style="margin-top:32px">
+        <button class="btn-green" onclick="wa('Olá! Quero saber mais sobre os serviços da AD Studio.')">Falar Connosco →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ CONTACTO ═══ -->
+<div class="page" id="contacto">
+  <div class="inner">
+    <div>
+      <p class="sec-eye">Vamos trabalhar juntos</p>
+      <h2 class="contact-h">FALA<br><span>CONNOSCO</span><br>AGORA.</h2>
+      <div class="contact-links">
+        <a href="https://wa.me/244940772278" target="_blank">
+          <span class="arr">→</span> +244 940 77 22 78 (WhatsApp)
+        </a>
+        <a href="#" onclick="return false">
+          <span class="arr">→</span> Instagram: @adstudio
+        </a>
+      </div>
+    </div>
+    <div class="form-box">
+      <h3>Enviar mensagem</h3>
+      <p>Selecciona o serviço, escreve a tua mensagem e abre directamente o WhatsApp.</p>
+      <div class="field">
+        <label>Serviço de interesse</label>
+        <select id="fs">
+          <option value="">Selecciona um serviço...</option>
+          <option>Suporte Técnico</option>
+          <option>Desenvolvimento Web</option>
+          <option>Edição de Vídeo</option>
+          <option>Motion Graphics</option>
+          <option>Design Gráfico</option>
+          <option>Outro / Vários Serviços</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>A tua mensagem</label>
+        <textarea id="fm" placeholder="Descreve o teu projecto..."></textarea>
+      </div>
+      <button class="btn-wa" onclick="sendWA()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.122 1.532 5.852L.057 23.428a.75.75 0 00.921.921l5.576-1.475A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.907 0-3.694-.513-5.23-1.406l-.374-.22-3.873 1.024 1.024-3.747-.242-.386A9.956 9.956 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+        Enviar pelo WhatsApp
+      </button>
+      <p class="wa-hint">+244 940 77 22 78</p>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="f-logo">AD<span>.</span>Studio</div>
+  <p>© 2026 AD Studio · Angola</p>
+  <p>Tecnologia · Design · Criação Visual</p>
+</footer>
+
+<script>
+const WA = '244940772278';
+
+function wa(msg){
+  window.open('https://wa.me/'+WA+'?text='+encodeURIComponent(msg),'_blank');
+}
+
+function sendWA(){
+  const s = document.getElementById('fs').value;
+  const m = document.getElementById('fm').value;
+  let t = 'Olá! Vim pelo site da AD Studio.';
+  if(s) t += '\n\n📌 Serviço: '+s;
+  if(m) t += '\n\n💬 Mensagem: '+m;
+  wa(t);
+}
+
+function show(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  const map={home:0,servicos:1,sobre:2,contacto:3};
+  const btns=document.querySelectorAll('.nav-btn');
+  if(btns[map[id]]) btns[map[id]].classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function toggleMenu(){
+  document.getElementById('mob').classList.toggle('open');
+}
+function closeMob(){
+  document.getElementById('mob').classList.remove('open');
+}
+
+// Close mobile menu on outside click
+document.addEventListener('click',function(e){
+  const mob=document.getElementById('mob');
+  const hbg=document.getElementById('hbg');
+  if(!mob.contains(e.target)&&!hbg.contains(e.target)){
+    mob.classList.remove('open');
+  }
+});
+</script>
+</body>
+</html>
